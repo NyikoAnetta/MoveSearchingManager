@@ -18,7 +18,9 @@ namespace MovieSearchingManager.Models
     {
         [BsonElement("year")]
         public int Year { get; set; }
-        [BsonElement("dayOfYear")]
-        public int DayOfYear { get; set; }
+        [BsonElement("month")]
+        public int Month { get; set; }
+        [BsonElement("day")]
+        public int Day { get; set; }
     }
 }

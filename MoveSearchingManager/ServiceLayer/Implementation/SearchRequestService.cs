@@ -77,14 +77,15 @@ namespace MovieSearchingManager.ServiceLayer.Implementation
         public List<Report> ReportPerDay<T>()
         {
             var collection = _db.GetCollection<SearchRequest>(_table);
-            var project = BsonDocument.Parse("{Key:1, Timestamp:1,year:{$year:'$timestamp'}, dayOfYear:{$dayOfYear:'$timestamp'}}");
-
-            var group = BsonDocument.Parse("{_id:{year:'$year', dayOfYear:'$dayOfYear'}, report_count:{$sum:1}}");
-
             var result = collection
                             .Aggregate()
-                            .Project(project)
-                            .Group(group)
+                            .Group(new BsonDocument { 
+                                { "_id", new BsonDocument { { "month", new BsonDocument("$month", "$timestamp") },
+                                    { "day", new BsonDocument("$dayOfMonth", "$timestamp") },
+                                    { "year", new BsonDocument("$year", "$timestamp") } }
+                                },
+                                { "report_count", new BsonDocument("$sum", 1) }
+                            })
                             .ToList();
             var reportJson = new List<Report>();
             foreach(var test in result)
